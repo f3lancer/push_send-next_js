@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "inputs-and-buttons";
 import Filter from "@/components/Campaign/Filter/Filter";
 import type { Campaign } from "push-api-client/src/types";
+import Pagination from "@/components/common/Pagination";
 
 type CampaignsPageProps = {
   companies: Campaign[];
@@ -111,33 +112,11 @@ export default function CampaignsPage({
           ))}
         </div>
       </div>
-
-      {pagesCount > 1 && (
-        <div className="flex items-center gap-2 mt-6 justify-center">
-          {pagination.map((p, idx) =>
-            p === "..." ? (
-              <span
-                key={`ellipsis-${idx}`}
-                className="px-2 text-gray-400 select-none"
-              >
-                ...
-              </span>
-            ) : (
-              <Link
-                key={`page-${p}`}
-                href={`?${getPaginationLinkParams(searchParams, p)}`}
-                className={`px-3 py-1 rounded-lg border transition ${
-                  p === currentPage
-                    ? "bg-blue-600 text-white border-blue-600 font-bold"
-                    : "bg-white border-gray-300 text-gray-700 hover:bg-blue-100"
-                }`}
-              >
-                {p}
-              </Link>
-            )
-          )}
-        </div>
-      )}
+      <Pagination
+        currentPage={currentPage}
+        totalItems={total}
+        itemsPerPage={perPage}
+      />
     </section>
   );
 }
