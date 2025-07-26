@@ -1,15 +1,18 @@
-import type { Campaign } from "./types";
+import type { Device } from "./types";
 
 const MAX_LIMIT = 100;
 
-export async function getCompanies(
+export async function getDevices(
   url: string,
   token: string,
   limit = 40,
   offset = 0,
   tags?: string[],
-  name?: string
-): Promise<{ total: number; offset: number; items: Campaign[] }> {
+  email?: string,
+  device_token?: string,
+  platform?: string,
+  user_id?: string
+): Promise<{ total: number; offset: number; items: Device[] }> {
   const safeLimit = Math.min(limit, MAX_LIMIT);
 
   const params = new URLSearchParams({
@@ -20,7 +23,10 @@ export async function getCompanies(
   if (tags && tags.length > 0) {
     for (const tag of tags) params.append("tags", tag);
   }
-  if (name) params.append("name", name);
+  if (email) params.append("email", email);
+  if (device_token) params.append("device_token", device_token);
+  if (platform) params.append("platform", platform);
+  if (user_id) params.append("user_id", user_id);
 
   const headers = {
     accept: "application/json",
