@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@source "../../node_modules/inputs-and-buttons";
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f6f6f6;
+}
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  background: #ededed;
+  width: 220px;
+  padding: 30px 10px;
+  box-sizing: border-box;
+  border-right: 1px solid #ddd;
+}
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.main {
+  flex: 1;
+  padding: 30px;
+  background: #fff;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.form-section,
+.history-section {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 28px;
+  max-width: 600px;
+}
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+input[type="text"],
+textarea {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+/* button {
+  padding: 8px 20px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background: #fafafa;
+  font-weight: 500;
+  cursor: pointer;
+} */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+th,
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+th {
+  background: #f1f1f1;
+}
+.status-success {
+  color: green;
+}
+.status-error {
+  color: red;
+}
+.btn-root {
+  transition: all 0.4s;
+}
+
+/* //////////////////////// */
+.btn-root {
+  padding: 0 25px;
+  border: 1px solid transparent;
+}
+.btn-root.secondary:hover {
+  background-color: #fff;
+  border: 1px solid #888;
+}
+.btn-root.rightIcon:hover {
+  background-color: #fff;
+  border: 1px solid #888;
+}
+.btn-root.primary:hover {
+  background-color: #fff;
+  border: 1px solid #888;
+  color: #000;
+}
+label.class-label {
+  top: 15px;
+}
