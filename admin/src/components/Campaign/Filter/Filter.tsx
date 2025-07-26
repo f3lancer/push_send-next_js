@@ -20,11 +20,14 @@ export default function Filter() {
   };
 
   return (
-    <form className="flex items-center gap-3 my-6" onSubmit={handleSubmit}>
-      <div className="f">
+    <form
+      className="flex items-center gap-3 my-6 flex-wrap md:flex-nowrap justify-between md:justify-normal"
+      onSubmit={handleSubmit}
+    >
+      <div className="w-full md:w-auto sm:w-[47%]">
         <Input onChange={(e) => setTags(e.target.value)} label="Tags" />
       </div>
-      <div className="f">
+      <div className="w-full md:w-auto sm:w-[47%]">
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -37,7 +40,7 @@ export default function Filter() {
         disabled={false}
         variant="secondary"
       >
-        Enter
+        Filter
       </Button>
     </form>
   );

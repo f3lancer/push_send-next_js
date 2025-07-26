@@ -1,30 +1,31 @@
 import { Button } from "inputs-and-buttons";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-// import "./Sidebar.css";
 
 const sidebarMenu = [
   {
     title: "Companies",
     icon: <ChevronRightIcon />,
     href: "/campaigns",
-    children: [
-      { label: "New Company", href: "/campaigns/new" },
-      // { label: "Edit Company", href: "/campaigns/123/edit" },
-      // { label: "Info Company", href: "/campaigns/123" },
-    ],
+    children: [{ label: "New Company", href: "/campaigns/new" }],
   },
   {
     title: "Devices",
     icon: <ChevronRightIcon />,
     href: "/devices",
-    // children: [{ label: "Info Device", href: "/devices/abc" }],
   },
 ];
 
 export const Sidebar = () => (
-  <aside className="sidebar">
-    <div className="logo mb-3 h-10 w-full">
+  <aside
+    className="
+      sidebar justify-between md:justify-start 
+      bg-[#ededed] min-w-[220px] px-[10px] py-[30px]
+      box-border border-r border-[#ddd]
+      flex flex-col sm:flex-row md:flex-col
+      "
+  >
+    <div className="logo mb-3 h-10 flex items-center justify-center min-w-[40px] w-[40px] h-auto">
       <a href="/" className="">
         <img
           src="/img/logo.png"
@@ -34,20 +35,25 @@ export const Sidebar = () => (
       </a>
     </div>
     <nav className="nav-wrap">
-      <ul className="menu-list flex flex-col gap-2">
+      <ul
+        className="menu-list gap-2
+       flex flex-col sm:flex-row md:flex-col"
+      >
         {sidebarMenu.map((section) => (
-          <li className="menu-item menu-item-has-children" key={section.title}>
+          <li
+            className="menu-item menu-item-has-children   
+            gap-2
+            flex flex-col sm:flex-row md:flex-col
+            "
+            key={section.title}
+          >
             <Link href={section.href ?? "#"}>
-              <Button
-                disabled={false}
-                // rightIcon={section.icon}
-                variant="rightIcon"
-              >
+              <Button disabled={false} variant="rightIcon">
                 {section.title}
               </Button>
             </Link>
             {section.children && (
-              <ul className="sub-menu flex flex-col gap-2 mt-3">
+              <ul className="sub-menu flex flex-col gap-2  ">
                 {section.children.map((item) => (
                   <li key={item.label} className="menu-list">
                     <Link href={item.href}>

@@ -35,7 +35,7 @@ export default function CampaignNew() {
         if (response && response._id) {
           router.push(`/campaigns/${response._id}/edit`);
         } else {
-          setSuccess(true); // fallback, якщо нема id
+          setSuccess(true);
         }
       } catch (error: any) {
         console.log("Error create: " + (error?.message || error));

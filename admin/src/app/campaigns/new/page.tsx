@@ -5,7 +5,7 @@ export default function Page() {
     <main className="main">
       <div className="topbar">
         <h1>Create Company</h1>
-        <button>Exit</button>
+        {/* <button>Exit</button> */}
       </div>
       <CampaignNewFetcher />
     </main>

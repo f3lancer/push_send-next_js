@@ -6,7 +6,7 @@ export default async function Page({ params }: { params: any }) {
     <main className="main">
       <div className="topbar">
         <h1>Campany Info</h1>
-        <button>Вийти</button>
+        {/* <button>Вийти</button> */}
       </div>
       <CampaignDetailFetcher id={resolvedParams.id} />
     </main>

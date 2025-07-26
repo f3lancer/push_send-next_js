@@ -70,40 +70,48 @@ const DevicesPage: React.FC<DevicesPageProps> = ({
   };
 
   return (
-    <div className="p-6">
+    <div className="">
       <h1 className="text-2xl font-bold mb-4">Devices</h1>
       <p className="mb-2 text-gray-600">Total: {total}</p>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto min-width: 340px;">
         <DevicesToolbar onFilter={handleFilter} />
-
-        <table className="min-w-full bg-white rounded-xl shadow">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="py-2 px-4 text-left">#</th>
-              <th className="py-2 px-4 text-left">Platform</th>
-              <th className="py-2 px-4 text-left">User ID</th>
-              <th className="py-2 px-4 text-left">Email</th>
-              <th className="py-2 px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {devices.map((d, idx) => (
-              <tr key={d._id} className="border-t">
-                <td className="py-2 px-4">{offset + idx + 1}</td>
-                <td className="py-2 px-4">{d.platform}</td>
-                <td className="py-2 px-4">{d.user_id}</td>
-                <td className="py-2 px-4">{d.email}</td>
-                <td className="py-2 px-4 text-right">
-                  <Link href={`/devices/${d._id}`}>
-                    <Button disabled={false} variant="secondary">
-                      Info
-                    </Button>
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="w-full bg-white rounded-xl shadow">
+          <div
+            className=" 
+            bg-gray-100 px-4 py-2 font-semibold  
+           hidden sm:grid grid-cols-[4%_12%_18%_auto_20%] gap-2 items-center"
+          >
+            <div>#</div>
+            <div>Platform</div>
+            <div>User ID</div>
+            <div>Email</div>
+            <div className="text-center">Actions</div>
+          </div>
+          {devices.map((d, idx) => (
+            <div
+              key={d._id}
+              className="
+              pl-2 py-2
+              gap-y-4
+              w-full
+              grid grid-cols-[5%_64%_25%]                
+              sm:grid-cols-[4%_12%_18%_auto_20%] items-center gap-2 
+            "
+            >
+              <div>{offset + idx + 1}</div>
+              <div>{d.platform}</div>
+              <div>{d.user_id}</div>
+              <div className="col-start-1 col-span-2 sm:col-span-1">
+                {d.email}
+              </div>
+              <Link href={`/devices/${d._id}`}>
+                <Button disabled={false} variant="secondary">
+                  Info
+                </Button>
+              </Link>
+            </div>
+          ))}
+        </div>
       </div>
       {pagesCount > 1 && (
         <div className="flex items-center gap-2 mt-6 justify-center">

@@ -37,7 +37,18 @@ export default function CampaignDetail({ campaign }: { campaign: Campaign }) {
       }
     });
   };
-
+  const campaignInfo = [
+    { label: "ID", value: campaign._id, className: "text-xs text-gray-600" },
+    { label: "Name", value: campaign.name },
+    { label: "Title", value: campaign.title },
+    { label: "Text", value: campaign.body, className: "whitespace-pre-line" },
+    { label: "Link", value: campaign.click_url, className: "break-all" },
+    {
+      label: "Tags",
+      value: campaign.tags?.join(", "),
+      className: "text-xs text-blue-700",
+    },
+  ];
   return (
     <main className="main">
       <section className="bg-[#fafafa] border border-[#eee] rounded-lg p-6 mb-7 max-w-[600px]">
@@ -52,47 +63,16 @@ export default function CampaignDetail({ campaign }: { campaign: Campaign }) {
             </Button>
           </div>
         </div>
-        <div className="mb-3">
-          <span className="block mb-1 font-medium">ID:</span>
-          <div className="w-full px-2 py-1 bg-white border border-[#ccc] rounded text-xs text-gray-600">
-            {campaign._id}
+        {campaignInfo.map(({ label, value, className = "" }) => (
+          <div key={label} className="mb-3">
+            <span className="block mb-1 font-medium">{label}:</span>
+            <div
+              className={`w-full px-2 py-1 bg-white border border-[#ccc] rounded ${className}`}
+            >
+              {value || "-"}
+            </div>
           </div>
-        </div>
-
-        <div className="mb-3">
-          <span className="block mb-1 font-medium">Name:</span>
-          <div className="w-full px-2 py-1 bg-white border border-[#ccc] rounded">
-            {campaign.name}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <span className="block mb-1 font-medium">Title:</span>
-          <div className="w-full px-2 py-1 bg-white border border-[#ccc] rounded">
-            {campaign.title}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <span className="block mb-1 font-medium">Text:</span>
-          <div className="w-full px-2 py-1 bg-white border border-[#ccc] rounded whitespace-pre-line">
-            {campaign.body}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <span className="block mb-1 font-medium">Link:</span>
-          <div className="w-full px-2 py-1 bg-white border border-[#ccc] rounded break-all">
-            {campaign.click_url}
-          </div>
-        </div>
-
-        <div className="mb-3">
-          <span className="block mb-1 font-medium">Tags:</span>
-          <div className="w-full px-2 py-1 bg-white border border-[#ccc] rounded text-xs text-blue-700">
-            {campaign.tags?.join(", ")}
-          </div>
-        </div>
+        ))}
 
         <div className="flex gap-8 text-sm text-gray-500 mb-1">
           <div>

@@ -6,9 +6,9 @@ export default function Home() {
       <div className="topbar">
         <h1>Admin panel</h1>
         <div className="exit w-max">
-          <Button disabled={false} variant="secondary">
+          {/* <Button disabled={false} variant="secondary">
             Exit
-          </Button>
+          </Button> */}
         </div>
       </div>
     </main>

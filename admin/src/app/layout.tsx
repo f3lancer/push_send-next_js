@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Header />
-        <div className="flex container">
+        <div className="flex flex-col container md:flex-row">
           <Sidebar />
           <ReactQueryProvider>{children}</ReactQueryProvider>
         </div>

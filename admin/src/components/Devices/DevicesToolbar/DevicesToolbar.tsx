@@ -29,11 +29,6 @@ export default function DevicesToolbar({ onFilter }) {
       <div className="bg-white  rounded-b-lg ">
         {openTab === "import" && <DeviceImport />}
         {openTab === "filter" && <FilterDevise onFilter={onFilter} />}
-        {openTab === "filter" && (
-          <button onClick={() => onFilter({ email: "alice.brown@mock.dev" })}>
-            Test Filter
-          </button>
-        )}
       </div>
     </div>
   );

@@ -50,7 +50,6 @@ const FilterDevise: React.FC<Props> = ({ onFilter }) => {
       <div className="grid grid-cols-2 justify-items-stretch w-full gap-x-6 gap-y-2.5 px-1  pt-4">
         <Input
           name="email"
-          // type="text"
           label="Email"
           errorText="String must contain at least 2 character(s)"
           onChange={handleChange}
@@ -60,7 +59,6 @@ const FilterDevise: React.FC<Props> = ({ onFilter }) => {
           name="userId"
           label="UserId"
           onChange={handleChange}
-          // type="text"
           errorText="String must contain at least 2 character(s)"
           value={filters.userId}
         />
@@ -68,21 +66,18 @@ const FilterDevise: React.FC<Props> = ({ onFilter }) => {
           name="platform"
           label="Platform"
           onChange={handleChange}
-          // type="text"
           value={filters.platform}
         />
         <Input
           name="tags"
           label="Tags"
           onChange={handleChange}
-          // type="text"
           value={filters.tags}
         />
         <Input
           name="deviceToken"
           label="DeviceToken"
           onChange={handleChange}
-          // type="text"
           value={filters.deviceToken}
         />
       </div>
