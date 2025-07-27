@@ -1,4 +1,3 @@
-// components/Devices/FilterDevise.tsx
 "use client";
 import React, { useState } from "react";
 import { Button, Input } from "inputs-and-buttons";

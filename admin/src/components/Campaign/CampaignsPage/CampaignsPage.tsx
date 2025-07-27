@@ -29,12 +29,6 @@ function getPagination(current: number, total: number) {
   return pages;
 }
 
-function getPaginationLinkParams(searchParams: URLSearchParams, page: number) {
-  const params = new URLSearchParams(searchParams.toString());
-  params.set("page", String(page));
-  return params.toString();
-}
-
 export default function CampaignsPage({
   companies,
   total,

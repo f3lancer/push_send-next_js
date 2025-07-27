@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { importDevices } from "push-api-client";
-import { Button } from "inputs-and-buttons";
+import { Button, Input } from "inputs-and-buttons";
 
 export default function DeviceImport() {
   const [file, setFile] = useState<File | null>(null);

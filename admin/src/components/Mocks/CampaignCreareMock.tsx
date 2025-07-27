@@ -1,10 +1,9 @@
 "use client";
 import { useState, useTransition } from "react";
 import { Button, Input } from "inputs-and-buttons";
-import { createCampaignOnServer } from "@/components/Campaign/CampaignCreateFetcher/CampaignCreateFetcher";
 import { useRouter } from "next/navigation";
 
-export default function CampaignNew() {
+export default function CampaignCreareMock() {
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -16,6 +15,7 @@ export default function CampaignNew() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     const dataToSend = {
       name,
       tags: tags
@@ -31,14 +31,22 @@ export default function CampaignNew() {
 
     startTransition(async () => {
       try {
-        const response = await createCampaignOnServer(dataToSend);
-        if (response && response._id) {
-          router.push(`/campaigns/${response._id}/edit`);
+        const res = await fetch("/api/campaigns", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dataToSend),
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+
+        if (json && json._id) {
+          router.push(`/campaigns-mock/${json._id}/edit`);
         } else {
           setSuccess(true);
         }
       } catch (error: any) {
-        console.log("Error create: " + (error?.message || error));
+        console.log("Error create:", error?.message || error);
       }
     });
   };
@@ -53,8 +61,6 @@ export default function CampaignNew() {
           label="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          helperText=""
-          errorText="String must contain at least 2 character(s)"
         />
       </div>
       <div className="mt-[24px]">
@@ -62,8 +68,6 @@ export default function CampaignNew() {
           label="Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          helperText=""
-          errorText="String must contain at least 2 character(s)"
         />
       </div>
       <div className="mt-[24px]">
@@ -71,8 +75,6 @@ export default function CampaignNew() {
           label="Text:"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          helperText=""
-          errorText="String must contain at least 2 character(s)"
         />
       </div>
       <div className="mt-[24px]">
@@ -80,8 +82,6 @@ export default function CampaignNew() {
           label="Link:"
           value={clickUrl}
           onChange={(e) => setClickUrl(e.target.value)}
-          helperText=""
-          errorText="String must contain at least 2 character(s)"
         />
       </div>
       <div className="mt-[24px]">
@@ -89,10 +89,9 @@ export default function CampaignNew() {
           label="Tags (comma separated):"
           value={tags}
           onChange={(e) => setTags(e.target.value)}
-          helperText=""
-          errorText="String must contain at least 2 character(s)"
         />
       </div>
+
       <div className="w-full mt-3">
         <Button disabled={isPending} variant="primary" type="submit">
           {isPending ? "Creating..." : "Create"}
