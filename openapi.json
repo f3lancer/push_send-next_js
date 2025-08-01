@@ -1,0 +1,1789 @@
+ openapi: 3.0.4
+ info:
+   title: Push Notification API
+   description: API for managing push notifications and campaigns
+   version: 1.0.0
+ components:
+   securitySchemes:
+     bearerAuth:
+       type: http
+       scheme: bearer
+   schemas:
+     Device:
+       type: object
+       properties:
+         _id:
+           type: string
+           pattern: ^[a-fA-F0-9]{24}$
+           description: Unique identifier for the device
+         device_token:
+           type: string
+           description: Unique device token
+         platform:
+           type: string
+           enum:
+             - ios
+             - android
+             - web
+           description: Platform of the device
+         user_id:
+           type: string
+           description: User identifier
+         email:
+           type: string
+           format: email
+           description: User email
+         tags:
+           type: array
+           items:
+             type: string
+           description: Tags associated with the device
+         undelivered:
+           type: boolean
+           default: false
+           description: Indicates if the device has undelivered notifications
+         created_at:
+           type: string
+           format: date-time
+           description: Creation timestamp
+         updated_at:
+           type: string
+           format: date-time
+           description: Last update timestamp
+       required:
+         - _id
+         - device_token
+         - platform
+     Campaign:
+       type: object
+       properties:
+         _id:
+           type: string
+           pattern: ^[a-fA-F0-9]{24}$
+           description: Unique identifier for the campaign
+         name:
+           type: string
+           description: Name of the campaign
+         tags:
+           type: array
+           items:
+             type: string
+           description: Tags associated with the campaign
+         title:
+           type: string
+           description: Title of the notifications
+         body:
+           type: string
+           description: Body text of the notifications
+         click_url:
+           type: string
+           format: uri
+           description: URL to open when the notification is clicked
+         schedule_at:
+           type: string
+           format: date-time
+           description: Scheduled time for the campaign
+         status:
+           type: string
+           enum:
+             - new
+             - running
+             - completed
+             - failed
+           description: Status of the campaign
+           default: new
+         created_at:
+           type: string
+           format: date-time
+           description: Creation timestamp
+         updated_at:
+           type: string
+           format: date-time
+           description: Last update timestamp
+       required:
+         - _id
+         - name
+         - title
+         - body
+     Notification:
+       type: object
+       properties:
+         _id:
+           type: string
+           pattern: ^[a-fA-F0-9]{24}$
+           description: Unique identifier for the notification
+         device_id:
+           type: string
+           pattern: ^[a-fA-F0-9]{24}$
+           description: Identifier of the device to which the notification was sent
+         campaign_id:
+           type: string
+           pattern: ^[a-fA-F0-9]{24}$
+           description: Identifier of the campaign associated with the notification
+         title:
+           type: string
+           description: Title of the notification
+         body:
+           type: string
+           description: Body text of the notification
+         click_url:
+           type: string
+           format: uri
+           description: URL to open when the notification is clicked
+         status:
+           type: string
+           enum:
+             - new
+             - sent
+             - failed
+             - delivered
+             - undelivered
+           description: Status of the notification
+         attempt:
+           type: integer
+           minimum: 0
+           maximum: 5
+           default: 0
+           description: Number of attempts made to send the notification
+         next_attempt:
+           type: string
+           format: date-time
+           description: Timestamp for the next attempt to send the notification
+         created_at:
+           type: string
+           format: date-time
+           description: Creation timestamp
+         updated_at:
+           type: string
+           format: date-time
+           description: Last update timestamp
+       required:
+         - _id
+         - device_id
+         - campaign_id
+         - title
+         - body
+         - status
+ paths:
+   /campaigns:
+     get:
+       summary: Get list of campaigns
+       tags:
+         - campaigns
+       description: Get a list of campaigns with optional filters
+       parameters:
+         - schema:
+             type: integer
+             minimum: 1
+             maximum: 100
+             default: 40
+           in: query
+           name: limit
+           required: false
+           description: Maximum number of items to return
+         - schema:
+             type: integer
+             minimum: 0
+             default: 0
+           in: query
+           name: offset
+           required: false
+           description: Number of items to skip before starting to collect the result set
+         - schema:
+             type: array
+             items:
+               type: string
+           in: query
+           name: tags
+           required: false
+           description: Tags to filter campaigns
+         - schema:
+             type: string
+           in: query
+           name: name
+           required: false
+           description: Name to filter campaigns
+       responses:
+         '200':
+           description: Paginated list of campaigns
+           content:
+             application/json:
+               schema:
+                 description: Paginated list of campaigns
+                 type: object
+                 properties:
+                   total:
+                     type: integer
+                     description: Total number of campaigns
+                   limit:
+                     type: integer
+                     description: Number of campaigns returned
+                   offset:
+                     type: integer
+                     description: Offset for pagination
+                   items:
+                     type: array
+                     items:
+                       type: object
+                       properties:
+                         _id:
+                           type: string
+                           pattern: ^[a-fA-F0-9]{24}$
+                           description: Unique identifier for the campaign
+                         name:
+                           type: string
+                           description: Name of the campaign
+                         tags:
+                           type: array
+                           items:
+                             type: string
+                           description: Tags associated with the campaign
+                         title:
+                           type: string
+                           description: Title of the notifications
+                         body:
+                           type: string
+                           description: Body text of the notifications
+                         click_url:
+                           type: string
+                           format: uri
+                           description: URL to open when the notification is clicked
+                         schedule_at:
+                           type: string
+                           format: date-time
+                           description: Scheduled time for the campaign
+                         status:
+                           type: string
+                           enum:
+                             - new
+                             - running
+                             - completed
+                             - failed
+                           description: Status of the campaign
+                           default: new
+                         created_at:
+                           type: string
+                           format: date-time
+                           description: Creation timestamp
+                         updated_at:
+                           type: string
+                           format: date-time
+                           description: Last update timestamp
+                       required:
+                         - _id
+                         - name
+                         - title
+                         - body
+                     description: List of campaigns
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+     post:
+       summary: Create a campaign
+       tags:
+         - campaigns
+       requestBody:
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 name:
+                   type: string
+                   description: Name of the campaign
+                 tags:
+                   type: array
+                   items:
+                     type: string
+                   description: Tags associated with the campaign
+                 title:
+                   type: string
+                   description: Title of the notifications
+                 body:
+                   type: string
+                   description: Body text of the notifications
+                 click_url:
+                   type: string
+                   format: uri
+                   description: URL to open when the notification is clicked
+               required:
+                 - name
+                 - title
+                 - body
+         required: true
+       responses:
+         '201':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the campaign
+                   name:
+                     type: string
+                     description: Name of the campaign
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the campaign
+                   title:
+                     type: string
+                     description: Title of the notifications
+                   body:
+                     type: string
+                     description: Body text of the notifications
+                   click_url:
+                     type: string
+                     format: uri
+                     description: URL to open when the notification is clicked
+                   schedule_at:
+                     type: string
+                     format: date-time
+                     description: Scheduled time for the campaign
+                   status:
+                     type: string
+                     enum:
+                       - new
+                       - running
+                       - completed
+                       - failed
+                     description: Status of the campaign
+                     default: new
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - name
+                   - title
+                   - body
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+   /campaigns/{_id}:
+     get:
+       summary: Get a campaign by ID
+       tags:
+         - campaigns
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '200':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the campaign
+                   name:
+                     type: string
+                     description: Name of the campaign
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the campaign
+                   title:
+                     type: string
+                     description: Title of the notifications
+                   body:
+                     type: string
+                     description: Body text of the notifications
+                   click_url:
+                     type: string
+                     format: uri
+                     description: URL to open when the notification is clicked
+                   schedule_at:
+                     type: string
+                     format: date-time
+                     description: Scheduled time for the campaign
+                   status:
+                     type: string
+                     enum:
+                       - new
+                       - running
+                       - completed
+                       - failed
+                     description: Status of the campaign
+                     default: new
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - name
+                   - title
+                   - body
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+     put:
+       summary: Update a campaign
+       tags:
+         - campaigns
+       requestBody:
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 name:
+                   type: string
+                   description: Name of the campaign
+                 tags:
+                   type: array
+                   items:
+                     type: string
+                   description: Tags associated with the campaign
+                 title:
+                   type: string
+                   description: Title of the notifications
+                 body:
+                   type: string
+                   description: Body text of the notifications
+                 click_url:
+                   type: string
+                   format: uri
+                   description: URL to open when the notification is clicked
+               required:
+                 - name
+                 - title
+                 - body
+         required: true
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '200':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the campaign
+                   name:
+                     type: string
+                     description: Name of the campaign
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the campaign
+                   title:
+                     type: string
+                     description: Title of the notifications
+                   body:
+                     type: string
+                     description: Body text of the notifications
+                   click_url:
+                     type: string
+                     format: uri
+                     description: URL to open when the notification is clicked
+                   schedule_at:
+                     type: string
+                     format: date-time
+                     description: Scheduled time for the campaign
+                   status:
+                     type: string
+                     enum:
+                       - new
+                       - running
+                       - completed
+                       - failed
+                     description: Status of the campaign
+                     default: new
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - name
+                   - title
+                   - body
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+     delete:
+       summary: Delete a campaign
+       tags:
+         - campaigns
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '204':
+           description: No Content
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+   /campaigns/{_id}/run:
+     post:
+       summary: Run a campaign
+       tags:
+         - campaigns
+       description: Run a campaign immediately or schedule it for later execution
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '200':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the campaign
+                   name:
+                     type: string
+                     description: Name of the campaign
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the campaign
+                   title:
+                     type: string
+                     description: Title of the notifications
+                   body:
+                     type: string
+                     description: Body text of the notifications
+                   click_url:
+                     type: string
+                     format: uri
+                     description: URL to open when the notification is clicked
+                   schedule_at:
+                     type: string
+                     format: date-time
+                     description: Scheduled time for the campaign
+                   status:
+                     type: string
+                     enum:
+                       - new
+                       - running
+                       - completed
+                       - failed
+                     description: Status of the campaign
+                     default: new
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - name
+                   - title
+                   - body
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+   /campaigns/{_id}/clone:
+     post:
+       summary: Clone a campaign
+       tags:
+         - campaigns
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '201':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the campaign
+                   name:
+                     type: string
+                     description: Name of the campaign
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the campaign
+                   title:
+                     type: string
+                     description: Title of the notifications
+                   body:
+                     type: string
+                     description: Body text of the notifications
+                   click_url:
+                     type: string
+                     format: uri
+                     description: URL to open when the notification is clicked
+                   schedule_at:
+                     type: string
+                     format: date-time
+                     description: Scheduled time for the campaign
+                   status:
+                     type: string
+                     enum:
+                       - new
+                       - running
+                       - completed
+                       - failed
+                     description: Status of the campaign
+                     default: new
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - name
+                   - title
+                   - body
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+   /devices:
+     get:
+       summary: Get list of devices with filters
+       tags:
+         - devices
+       description: Name to filter entities
+       parameters:
+         - schema:
+             type: integer
+             minimum: 1
+             maximum: 100
+             default: 40
+           in: query
+           name: limit
+           required: false
+           description: Maximum number of items to return
+         - schema:
+             type: integer
+             minimum: 0
+             default: 0
+           in: query
+           name: offset
+           required: false
+           description: Number of items to skip before starting to collect the result set
+         - schema:
+             type: array
+             items:
+               type: string
+           in: query
+           name: tags
+           required: false
+           description: Tags to filter entities
+         - schema:
+             type: string
+             format: email
+           in: query
+           name: email
+           required: false
+           description: Email to filter entities
+         - schema:
+             type: string
+           in: query
+           name: device_token
+           required: false
+           description: Device token to filter entities
+         - schema:
+             type: string
+             enum:
+               - ios
+               - android
+               - web
+           in: query
+           name: platform
+           required: false
+           description: Platform to filter entities
+         - schema:
+             type: string
+           in: query
+           name: user_id
+           required: false
+           description: User ID to filter entities
+       responses:
+         '200':
+           description: Paginated list of devices
+           content:
+             application/json:
+               schema:
+                 description: Paginated list of devices
+                 type: object
+                 properties:
+                   total:
+                     type: integer
+                     description: Total number of devices
+                   limit:
+                     type: integer
+                     description: Number of devices returned
+                   offset:
+                     type: integer
+                     description: Offset for pagination
+                   items:
+                     type: array
+                     items:
+                       type: object
+                       properties:
+                         _id:
+                           type: string
+                           pattern: ^[a-fA-F0-9]{24}$
+                           description: Unique identifier for the device
+                         device_token:
+                           type: string
+                           description: Unique device token
+                         platform:
+                           type: string
+                           enum:
+                             - ios
+                             - android
+                             - web
+                           description: Platform of the device
+                         user_id:
+                           type: string
+                           description: User identifier
+                         email:
+                           type: string
+                           format: email
+                           description: User email
+                         tags:
+                           type: array
+                           items:
+                             type: string
+                           description: Tags associated with the device
+                         undelivered:
+                           type: boolean
+                           default: false
+                           description: Indicates if the device has undelivered notifications
+                         created_at:
+                           type: string
+                           format: date-time
+                           description: Creation timestamp
+                         updated_at:
+                           type: string
+                           format: date-time
+                           description: Last update timestamp
+                       required:
+                         - _id
+                         - device_token
+                         - platform
+                     description: List of devices
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+     post:
+       summary: Create a device
+       tags:
+         - devices
+       requestBody:
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 device_token:
+                   type: string
+                   description: Unique device token
+                 platform:
+                   type: string
+                   enum:
+                     - ios
+                     - android
+                     - web
+                   description: Platform of the device
+                 user_id:
+                   type: string
+                   description: User identifier
+                 email:
+                   type: string
+                   format: email
+                   description: User email
+                 tags:
+                   type: array
+                   items:
+                     type: string
+                   description: Tags associated with the device
+               required:
+                 - device_token
+                 - platform
+         required: true
+       responses:
+         '201':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the device
+                   device_token:
+                     type: string
+                     description: Unique device token
+                   platform:
+                     type: string
+                     enum:
+                       - ios
+                       - android
+                       - web
+                     description: Platform of the device
+                   user_id:
+                     type: string
+                     description: User identifier
+                   email:
+                     type: string
+                     format: email
+                     description: User email
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the device
+                   undelivered:
+                     type: boolean
+                     default: false
+                     description: Indicates if the device has undelivered notifications
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - device_token
+                   - platform
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+   /devices/{_id}:
+     get:
+       summary: Get a device by ID
+       tags:
+         - devices
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '200':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the device
+                   device_token:
+                     type: string
+                     description: Unique device token
+                   platform:
+                     type: string
+                     enum:
+                       - ios
+                       - android
+                       - web
+                     description: Platform of the device
+                   user_id:
+                     type: string
+                     description: User identifier
+                   email:
+                     type: string
+                     format: email
+                     description: User email
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the device
+                   undelivered:
+                     type: boolean
+                     default: false
+                     description: Indicates if the device has undelivered notifications
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - device_token
+                   - platform
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+     put:
+       summary: Update a device
+       tags:
+         - devices
+       requestBody:
+         content:
+           application/json:
+             schema:
+               type: object
+               properties:
+                 device_token:
+                   type: string
+                   description: Unique device token
+                 platform:
+                   type: string
+                   enum:
+                     - ios
+                     - android
+                     - web
+                   description: Platform of the device
+                 user_id:
+                   type: string
+                   description: User identifier
+                 email:
+                   type: string
+                   format: email
+                   description: User email
+                 tags:
+                   type: array
+                   items:
+                     type: string
+                   description: Tags associated with the device
+               required:
+                 - device_token
+                 - platform
+         required: true
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '200':
+           description: Default Response
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   _id:
+                     type: string
+                     pattern: ^[a-fA-F0-9]{24}$
+                     description: Unique identifier for the device
+                   device_token:
+                     type: string
+                     description: Unique device token
+                   platform:
+                     type: string
+                     enum:
+                       - ios
+                       - android
+                       - web
+                     description: Platform of the device
+                   user_id:
+                     type: string
+                     description: User identifier
+                   email:
+                     type: string
+                     format: email
+                     description: User email
+                   tags:
+                     type: array
+                     items:
+                       type: string
+                     description: Tags associated with the device
+                   undelivered:
+                     type: boolean
+                     default: false
+                     description: Indicates if the device has undelivered notifications
+                   created_at:
+                     type: string
+                     format: date-time
+                     description: Creation timestamp
+                   updated_at:
+                     type: string
+                     format: date-time
+                     description: Last update timestamp
+                 required:
+                   - _id
+                   - device_token
+                   - platform
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+     delete:
+       summary: Delete a device
+       tags:
+         - devices
+       parameters:
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: path
+           name: _id
+           required: true
+           description: Unique identifier
+       responses:
+         '204':
+           description: No Content
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+         '404':
+           description: Not Found
+           content:
+             application/json:
+               schema:
+                 description: Not Found
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the resource was not found
+   /devices/import:
+     post:
+       summary: Import devices via CSV file
+       tags:
+         - devices
+       description: |-
+         Import devices from a CSV file. The file should contain device tokens, platforms, and optional user IDs and tags.
+         Example CSV format:
+         ```
+         device_token,platform,user_id,tags
+         token1,ios,user1,tag1
+         token2,android,user2,"tag2,tag3"
+         ```
+       responses:
+         '204':
+           description: No Content
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+   /notifications:
+     get:
+       summary: Get list of notifications
+       tags:
+         - notifications
+       parameters:
+         - schema:
+             type: integer
+             minimum: 1
+             maximum: 100
+             default: 40
+           in: query
+           name: limit
+           required: false
+           description: Maximum number of items to return
+         - schema:
+             type: integer
+             minimum: 0
+             default: 0
+           in: query
+           name: offset
+           required: false
+           description: Number of items to skip before starting to collect the result set
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: query
+           name: campaign_id
+           required: false
+           description: Filter notifications by campaign ID
+         - schema:
+             type: string
+             enum:
+               - new
+               - sent
+               - failed
+               - delivered
+               - undelivered
+           in: query
+           name: status
+           required: false
+           description: Filter notifications by status
+         - schema:
+             type: string
+             pattern: ^[a-fA-F0-9]{24}$
+           in: query
+           name: device_id
+           required: false
+           description: Filter notifications by device ID
+       responses:
+         '200':
+           description: Paginated list of notifications
+           content:
+             application/json:
+               schema:
+                 description: Paginated list of notifications
+                 type: object
+                 properties:
+                   total:
+                     type: integer
+                     description: Total number of notifications
+                   limit:
+                     type: integer
+                     description: Number of notifications returned
+                   offset:
+                     type: integer
+                     description: Offset for pagination
+                   items:
+                     type: array
+                     items:
+                       type: object
+                       properties:
+                         _id:
+                           type: string
+                           pattern: ^[a-fA-F0-9]{24}$
+                           description: Unique identifier for the notification
+                         device_id:
+                           type: string
+                           pattern: ^[a-fA-F0-9]{24}$
+                           description: Identifier of the device to which the notification was sent
+                         campaign_id:
+                           type: string
+                           pattern: ^[a-fA-F0-9]{24}$
+                           description: Identifier of the campaign associated with the notification
+                         title:
+                           type: string
+                           description: Title of the notification
+                         body:
+                           type: string
+                           description: Body text of the notification
+                         click_url:
+                           type: string
+                           format: uri
+                           description: URL to open when the notification is clicked
+                         status:
+                           type: string
+                           enum:
+                             - new
+                             - sent
+                             - failed
+                             - delivered
+                             - undelivered
+                           description: Status of the notification
+                         attempt:
+                           type: integer
+                           minimum: 0
+                           maximum: 5
+                           default: 0
+                           description: Number of attempts made to send the notification
+                         next_attempt:
+                           type: string
+                           format: date-time
+                           description: Timestamp for the next attempt to send the notification
+                         created_at:
+                           type: string
+                           format: date-time
+                           description: Creation timestamp
+                         updated_at:
+                           type: string
+                           format: date-time
+                           description: Last update timestamp
+                       required:
+                         - _id
+                         - device_id
+                         - campaign_id
+                         - title
+                         - body
+                         - status
+                     description: List of notifications
+         '400':
+           description: Bad Request
+           content:
+             application/json:
+               schema:
+                 description: Bad Request
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request was invalid
+                   errors:
+                     type: array
+                     items:
+                       type: object
+                       required:
+                         - field
+                         - message
+                       properties:
+                         field:
+                           type: string
+                           description: The field that caused the error
+                         message:
+                           type: string
+                           description: Error message for the field
+         '401':
+           description: Unauthorized
+           content:
+             application/json:
+               schema:
+                 description: Unauthorized
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     description: Error message indicating the request is unauthorized
+ servers:
+   - url: https://push-api-staging.mssg.dev/v1
+     description: Staging server
+ security:
+   - bearerAuth: []
+ 
