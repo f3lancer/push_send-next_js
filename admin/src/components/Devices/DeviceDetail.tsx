@@ -3,7 +3,7 @@ import type { Device } from "push-api-client";
 import { Button } from "inputs-and-buttons";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { DeleteDevicesOnServer } from "@/components/Devices/DeleteDeviceOnServer/DeleteDeviceOnServer";
+import { DeleteDevicesOnServer } from "@/components/Devices/DeleteDeviceOnServer";
 
 export default function DeviceDetail({ device }: { device: Device }) {
   const [isPending, startTransition] = useTransition();

@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import DevicesPage from "@/components/Devices/DevicesPage/DevicesPage";
+import DevicesPage from "@/components/Devices/DevicesPage";
 
 type Device = {
   _id: string;

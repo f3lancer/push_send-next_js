@@ -1,7 +1,7 @@
 "use client";
 import { useState, useTransition } from "react";
 import { Button, Input } from "inputs-and-buttons";
-import { createCampaignOnServer } from "@/components/Campaign/CampaignCreateFetcher/CampaignCreateFetcher";
+import { createCampaignOnServer } from "@/components/Campaign/CampaignCreateFetcher";
 import { useRouter } from "next/navigation";
 
 export default function CampaignNew() {

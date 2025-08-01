@@ -3,8 +3,8 @@ import type { Campaign } from "push-api-client";
 import { useRouter } from "next/navigation";
 import { Button } from "inputs-and-buttons";
 import { useTransition, useState } from "react";
-import { DeleteCampaignOnServer } from "@/components/Campaign/DeleteCampaignOnServer/DeleteCampaignOnServer";
-import { RunCampaignOnServer } from "@/components/Campaign/RunCampaignOnServer/RunCampaignOnServer";
+import { DeleteCampaignOnServer } from "@/components/Campaign/DeleteCampaignOnServer";
+import { RunCampaignOnServer } from "@/components/Campaign/RunCampaignOnServer";
 
 export default function CampaignDetail({ campaign }: { campaign: Campaign }) {
   const [isPending, startTransition] = useTransition();

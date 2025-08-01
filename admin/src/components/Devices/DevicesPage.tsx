@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "inputs-and-buttons";
 import type { Device } from "push-api-client/src/types";
 import { useRouter, useSearchParams } from "next/navigation";
-import DevicesToolbar from "@/components/Devices/DevicesToolbar/DevicesToolbar";
+import DevicesToolbar from "@/components/Devices/DevicesToolbar";
 import Pagination from "@/components/common/Pagination";
 
 type DevicesPageProps = {

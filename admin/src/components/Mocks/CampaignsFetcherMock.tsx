@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import CampaignsPage from "@/components/Campaign/CampaignsPage/CampaignsPage";
+import CampaignsPage from "@/components/Campaign/CampaignsPage";
 
 export default function CampaignsFetcherMock() {
   const searchParams = useSearchParams();

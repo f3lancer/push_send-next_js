@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import DeviceImport from "@/components/Devices/DeviceImport/DeviceImport";
-import FilterDevise from "@/components/Devices/DevicesFilter/DevicesFilter";
+import DeviceImport from "@/components/Devices/DeviceImport";
+import FilterDevise from "@/components/Devices/DevicesFilter";
 import { Button } from "inputs-and-buttons";
 
 export default function DevicesToolbar({ onFilter }) {

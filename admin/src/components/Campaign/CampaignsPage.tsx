@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "inputs-and-buttons";
-import Filter from "@/components/Campaign/Filter/Filter";
+import Filter from "@/components/Campaign/Filter";
 import type { Campaign } from "push-api-client/src/types";
 import Pagination from "@/components/common/Pagination";
 

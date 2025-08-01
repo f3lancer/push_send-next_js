@@ -2,7 +2,7 @@
 import { useState, useTransition } from "react";
 import { Button, Input } from "inputs-and-buttons";
 import type { Campaign } from "push-api-client";
-import { updateCampaignOnServer } from "@/components/Campaign/CampaignUpdateFetcher/CampaignUpdateFetcher";
+import { updateCampaignOnServer } from "@/components/Campaign/CampaignUpdateFetcher";
 
 export default function CampaignEdit({ campaign }: { campaign: Campaign }) {
   const [name, setName] = useState(campaign.name || "");
